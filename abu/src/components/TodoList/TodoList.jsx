@@ -2,39 +2,39 @@ import TodoItem from '../TodoItem/TodoItem';
 import './todoList.css';
 import FilterButtons from '../FilterButtons/FilterButtons';
 import CorrectItem from '../TodoItem/CorrectItem';
+import {useSelector, useDispatch} from 'react-redux';
+import {removeTodo, setKey, setCorrect, editText} from '../../store/todoSlice'
 
-const TodoList = ({ list, data, setData, status, setStatus }) => {
+const TodoList = ({ data, setData, status, setStatus }) => {
+  const dispatch = useDispatch();
+  const todos = useSelector(state => state.todos.todos);
+  
   const deleteTodo = id => {
-    setData(data.filter(item => item.id !== id));
+    console.log(todos);
+    
+    dispatch(removeTodo({id}))
   };
 
-  const setKey = (key, id) => {
-    setData(
-      data.map(item => {
-        if (id === item.id) {
-          return { ...item, [key]: !item[key] };
-        }
-        return { ...item, correct: false };
-      })
-    );
+  const foundKey = (id) => {
+    dispatch(setKey({id}))
+  };
+
+  const foundCorrect = (id) => {
+    dispatch(setCorrect({id}))
   };
 
   const correctFunc = (text, id) => {
-    setData(
-      data.map(item =>
-        item.id === id ? { ...item, text, correct: false } : item
-      )
-    );
+    dispatch(editText({text, id}))
   };
 
   return (
     <div className="todo-list">
       <FilterButtons setStatus={setStatus} status={status} />
-      {list.map(item =>
+      {todos.map(item =>
         item.correct ? (
           <CorrectItem
             correctFunc={correctFunc}
-            setKey={setKey}
+            setKey={foundKey}
             item={item}
             key={item.id}
           />
@@ -42,9 +42,10 @@ const TodoList = ({ list, data, setData, status, setStatus }) => {
           <TodoItem
             deleteTodo={deleteTodo}
             status={status}
-            setKey={setKey}
+            setKey={foundKey}
             key={item.id}
             item={item}
+            findCorrect={foundCorrect}
           />
         )
       )}

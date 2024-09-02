@@ -1,8 +1,15 @@
+import { useDispatch } from 'react-redux';
 import './todoItem.css';
 import { useState } from 'react';
+import { setCorrect } from '../../store/todoSlice';
 
 const CorrectItem = ({ item, correctFunc, setKey }) => {
   const [text, setText] = useState(item.text);
+
+  const dispatch = useDispatch();
+  const cancle = (id) => {    
+    dispatch(setCorrect({id}))
+  }
 
   return (
     <div className="todo-item-correct">
@@ -20,7 +27,7 @@ const CorrectItem = ({ item, correctFunc, setKey }) => {
       </button>
       <button
         className="todo-item-correct-btn"
-        onClick={() => setKey('correct', item.id)}
+        onClick={() => cancle(item.id)}
       >
         Cancel
       </button>
